@@ -7,7 +7,7 @@ pipeline {
     }
     environment {
         // jenkins에 등록해 놓은 docker hub credentials 이름
-        DOCKERHUB_CREDENTIALS = credentials('Dockerhub-jenkis')
+        DOCKERHUB_CREDENTIALS = credentials('Dockerhub-jenkins')
     }
     stages {
         stage('Git Clone') {
