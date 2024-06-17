@@ -5,6 +5,10 @@ pipeline {
         jdk 'JDK17'
         maven 'M3'
     }
+    environment {
+        // jenkins에 등록해 놓은 docker hub credentials 이름
+        DOCKERHUB_CREDENTIALS = credentials('Dockerhub-jenkis')
+    }
     stages {
         stage('Git Clone') {
             steps {
@@ -47,6 +51,25 @@ pipeline {
             steps {
                 echo 'Deploy'
             }
+        stage('Docker Login') {
+            steps {
+                // docker hub 로그인
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --passwword-stdin'
+            }
+        stage ('Docker Image Push') {
+            steps {
+                // docker hub에 이미지 업로드
+                sh 'docker push alexuna/spring-petclinic:latest'
+        }
+        stage ('Docker Image Remove') {
+            steps {
+                // docker image 삭제
+                sh """
+                docker rmi alexuna/spring-petclinic:$BUILD_NUMBER
+                docker rmi alexuna/spring-petclinic:latest
+                """
+        }
+        
         }
     }
 }
